@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from service.server import db
 
-
+# Person Tables
 class Person(db.Model):
     __tablename__ = "persons"
 
@@ -12,6 +12,7 @@ class Person(db.Model):
         "AddressSegment", order_by="desc(AddressSegment.start_date)"
     )
 
+    # Field of the persons table
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=lambda: uuid.uuid4())
     first_name = db.Column(db.String(128), nullable=False)
     middle_name = db.Column(db.String(128), nullable=True)
@@ -20,11 +21,14 @@ class Person(db.Model):
     date_of_birth = db.Column(db.Date, nullable=False)
 
 
+# AddressSegment Tables
 class AddressSegment(db.Model):
     __tablename__ = "address_segments"
 
+    # ForeignKey to make the relationship
     person_id = db.Column(UUID(as_uuid=True), db.ForeignKey("persons.id"))
 
+    # AddressSegment Fields
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=lambda: uuid.uuid4())
     street_one = db.Column(db.String(128), nullable=False)
     street_two = db.Column(db.String(128), nullable=True)

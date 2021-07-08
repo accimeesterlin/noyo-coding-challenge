@@ -6,7 +6,7 @@ from marshmallow import Schema, fields
 from service.server import app, db
 from service.models import Person
 
-
+# Create a Person in the Persons table
 class CreatePersonSchema(Schema):
     first_name = fields.Str(required=True, max=128)
     middle_name = fields.Str(max=128)
@@ -14,7 +14,7 @@ class CreatePersonSchema(Schema):
     email = fields.Email(required=True, max=128)
     date_of_birth = fields.Date(required=True)
 
-
+# Show the persons results
 class PersonResultSchema(Schema):
     class Meta:
         ordered = True
@@ -27,6 +27,7 @@ class PersonResultSchema(Schema):
     date_of_birth = fields.Date(required=True)
 
 
+# Update person inside the persons table
 class UpdatePersonSchema(Schema):
     first_name = fields.Str(max=128)
     middle_name = fields.Str(max=128)
@@ -35,12 +36,15 @@ class UpdatePersonSchema(Schema):
     date_of_birth = fields.Date()
 
 
+# Routes
+# Get all the persons
 @app.route("/api/persons", methods=["GET"])
 def get_persons():
     persons = Person.query.order_by(Person.id.asc()).all()
     return jsonify(PersonResultSchema(many=True).dump(persons))
 
 
+# Get a person
 @app.route("/api/persons/<uuid:id>", methods=["GET"])
 def get_person(id):
     person = Person.query.get(id)
@@ -50,6 +54,7 @@ def get_person(id):
     return jsonify(PersonResultSchema().dump(person))
 
 
+#  Add a person
 @app.route("/api/persons", methods=["POST"])
 @use_args(CreatePersonSchema())
 def create_person(payload):
@@ -68,6 +73,7 @@ def create_person(payload):
     return jsonify(PersonResultSchema().dump(person))
 
 
+# Update a person
 @app.route("/api/persons/<uuid:id>", methods=["PATCH"])
 @use_args(UpdatePersonSchema())
 def update_person(payload, id):
