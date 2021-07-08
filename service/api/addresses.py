@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pprint
 from datetime import datetime, timedelta
 import json
-from flask import abort, jsonify
+from flask import abort, jsonify, request
 from webargs.flaskparser import use_args
 
 from marshmallow import Schema, fields
@@ -45,6 +45,12 @@ def get_address(args, person_id):
     elif len(person.address_segments) == 0:
         abort(404, description="person does not have an address, please create one")
 
+    address_segnments = person.address_segments
+    if request.args.get('date'):
+        for address in address_segnments:
+            # The Date logic works fine
+            if address.start_date.isoformat() == request.args.get('date'):
+                return jsonify(AddressSchema().dump(address))
     address_segment = person.address_segments[-1]  # What the heck is this
     return jsonify(AddressSchema().dump(address_segment))
 
@@ -102,7 +108,7 @@ def create_address(payload, person_id):
 
                 # Checking for duplicate address
                 if isStreetOneDuplicate and isStreetTwoDuplicate and isCityDuplicate and isStateDuplicate and isZipCodeDuplicate:
-                    abort(409, description='Address already exists')
+                    return jsonify({'message': 'Address already exist!'})
         # If there are one or more existing AddressSegments, create a new AddressSegment
         # that begins on the start_date provided in the API request and continues
         # into the future. If the start_date provided is not greater than most recent
