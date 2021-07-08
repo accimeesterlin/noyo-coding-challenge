@@ -149,23 +149,23 @@ def test_implementation_create_and_update_address(
 
 
 # TODO: Extension One
-# def test_extension_one_validation_of_same_start_date(test_context, client, seed_address_segment):
-#     with test_context:
-#         # Update the existing address using the person_id and start_date from the
-#         # already existing, seed_address_segment
-#         response = client.put(
-#             f"/api/persons/{seed_address_segment.person_id}/address", json={
-#                 "street_one": "123 Main Street",
-#                 "city": "San Francisco",
-#                 "state": "CA",
-#                 "zip_code": "94613",
-#                 "start_date": seed_address_segment.start_date.isoformat()
-#             }
-#         )
-#         assert response.status_code == 422
-#         assert response.json == {
-#             "error": "Address segment already exists with start_date 2021-01-01"
-#         }
+def test_extension_one_validation_of_same_start_date(test_context, client, seed_address_segment):
+    with test_context:
+        # Update the existing address using the person_id and start_date from the
+        # already existing, seed_address_segment
+        response = client.put(
+            f"/api/persons/{seed_address_segment.person_id}/address", json={
+                "street_one": "123 Main Street",
+                "city": "San Francisco",
+                "state": "CA",
+                "zip_code": "94613",
+                "start_date": seed_address_segment.start_date.isoformat()
+            }
+        )
+        assert response.status_code == 422
+        assert response.json == {
+            "error": "Address segment already exists with start_date 2021-01-01"
+        }
 
 # TODO: Extension Two
 # def test_extension_two_get_address_by_date(test_context, client, seed_address_segment):

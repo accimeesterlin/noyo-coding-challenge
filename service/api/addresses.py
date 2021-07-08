@@ -89,8 +89,10 @@ def create_address(payload, person_id):
         address_segment = person.address_segments
         for address in address_segment:
             # The Date logic works fine
-            if address.start_date >= payload.get('start_date'):
+            if address.start_date > payload.get('start_date'):
                 return jsonify({'message': 'A record already exists with start_date greater than what was provided!'}), 409
+            elif address.start_date == payload.get('start_date'):
+                return jsonify({'error': 'Address segment already exists with start_date ' + payload.get('start_date').isoformat()}), 422
             else:
                 isStreetOneDuplicate = payload.get('street_one') == address.street_one
                 isStreetTwoDuplicate = payload.get('street_two') == address.street_two
@@ -101,8 +103,6 @@ def create_address(payload, person_id):
                 # Checking for duplicate address
                 if isStreetOneDuplicate and isStreetTwoDuplicate and isCityDuplicate and isStateDuplicate and isZipCodeDuplicate:
                     abort(409, description='Address already exists')
-                logging.info('Is Street The Same')
-                logging.info(payload.get('street_one'))
         # If there are one or more existing AddressSegments, create a new AddressSegment
         # that begins on the start_date provided in the API request and continues
         # into the future. If the start_date provided is not greater than most recent
